@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Controller,
     Get,
     NotFoundException,
@@ -15,7 +16,7 @@ export class CompetitionsController {
     // GET /competitions - Get all competitions with optional filters
     @Get()
     async getCompetitions(
-        @Query('isCreatedAfter') isAfter?: string,
+        @Query('isCreatedAfter') isCreatedAfter?: string,
         @Query('limit') limit?: string,
         @Query('source') source?: string,
         @Query('keyword') keyword?: string,
@@ -27,8 +28,14 @@ export class CompetitionsController {
         if (keyword) {
             where.title = { contains: keyword };
         }
+        if (isCreatedAfter) {
+            // check for valid date
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(isCreatedAfter)) {
+                throw new BadRequestException('Invalid date format');
+            }
+            where.createdAt = { gt: isCreatedAfter };
+        }
         const data = await this.competitionService.competitions({
-            skip: isAfter ? Number(isAfter) : undefined,
             take: limit ? Number(limit) : undefined,
             where,
             orderBy: { createdAt: 'desc' },

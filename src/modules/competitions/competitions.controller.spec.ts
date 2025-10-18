@@ -66,12 +66,13 @@ describe('CompetitionsController', () => {
                 .spyOn(competitionService, 'competitions')
                 .mockResolvedValue([]);
 
-            await competitionsController.getCompetitions('10', '20');
+            await competitionsController.getCompetitions('2025-05-01', '20');
 
             expect(spy).toHaveBeenCalledWith({
-                skip: 10,
                 take: 20,
-                where: {},
+                where: {
+                    createdAt: { gt: '2025-05-01' },
+                },
                 orderBy: { createdAt: 'desc' },
             });
         });
@@ -141,16 +142,19 @@ describe('CompetitionsController', () => {
                 .mockResolvedValue([]);
 
             await competitionsController.getCompetitions(
-                '5',
+                '2025-05-01',
                 '15',
                 'test-source',
                 'comp',
             );
 
             expect(spy).toHaveBeenCalledWith({
-                skip: 5,
                 take: 15,
-                where: { source: 'test-source', title: { contains: 'comp' } },
+                where: {
+                    source: 'test-source',
+                    title: { contains: 'comp' },
+                    createdAt: { gt: '2025-05-01' },
+                },
                 orderBy: { createdAt: 'desc' },
             });
         });
