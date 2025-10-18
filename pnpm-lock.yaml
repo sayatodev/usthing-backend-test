@@ -26,6 +26,12 @@ importers:
       '@prisma/client':
         specifier: ^6.17.1
         version: 6.17.1(prisma@6.17.1(typescript@5.9.3))(typescript@5.9.3)
+      axios:
+        specifier: ^1.12.2
+        version: 1.12.2
+      cheerio:
+        specifier: ^1.1.2
+        version: 1.1.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -63,12 +69,6 @@ importers:
       '@types/supertest':
         specifier: ^6.0.2
         version: 6.0.3
-      axios:
-        specifier: ^1.12.2
-        version: 1.12.2
-      cheerio:
-        specifier: ^1.1.2
-        version: 1.1.2
       eslint:
         specifier: ^9.18.0
         version: 9.38.0(jiti@2.6.1)
