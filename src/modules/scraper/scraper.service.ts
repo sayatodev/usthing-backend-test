@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { chromium } from 'playwright';
-import {
-    normalizeText,
-    sanitizeOutput,
-    isNearDuplicate,
-} from './utils/similarities';
+import { normalizeText, isNearDuplicate } from './utils/similarities';
 import extractors from './extractors';
 
 @Injectable()
@@ -54,7 +50,7 @@ export class ScraperService {
             });
             return {
                 status: 'success',
-                data: unique.map((u) => sanitizeOutput(u.original)),
+                data: unique.map((u) => u.original),
             };
         } catch (e) {
             console.error('Scraping failed:', e);

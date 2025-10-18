@@ -5,17 +5,6 @@ export function normalizeText(text: string): string {
     return t;
 }
 
-export function sanitizeOutput(text: string): string {
-    // Remove non-ascii safely without control-char class ranges that lint flags
-    let t = text
-        .split('')
-        .filter((ch) => ch.charCodeAt(0) <= 127)
-        .join('');
-    t = t.replace(/[^a-zA-Z0-9\s]/g, '');
-    t = t.replace(/\s+/g, ' ').trim();
-    return t;
-}
-
 export function levenshteinDistance(a: string, b: string): number {
     const m = a.length;
     const n = b.length;
