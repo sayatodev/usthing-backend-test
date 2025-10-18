@@ -10,6 +10,7 @@ describe('CompetitionsController', () => {
 
     const mockCompetition: Competition = {
         id: 'test-id-123',
+        externalId: 'external-id-456',
         title: 'Test Competition',
         url: 'https://example.com',
         source: 'test-source',

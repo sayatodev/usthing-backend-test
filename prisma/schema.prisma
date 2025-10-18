@@ -16,6 +16,7 @@ datasource db {
 
 model Competition {
   id                  String    @id @default(cuid())
+  externalId          String?
   title               String
   url                 String?
   source              String?   
@@ -23,4 +24,5 @@ model Competition {
   updatedAt           DateTime  @updatedAt
 
   @@index([createdAt])
+  @@unique([externalId, source])
 }
