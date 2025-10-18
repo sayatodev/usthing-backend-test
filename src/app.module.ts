@@ -6,12 +6,12 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ScraperModule } from './modules/scraper/scraper.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    CompetitionModule,
-    PrismaModule,
-    ScraperModule,
-  ],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot(),
+        CompetitionModule,
+        PrismaModule,
+        ScraperModule,
+    ],
+    providers: [AppService],
 })
 export class AppModule {}
