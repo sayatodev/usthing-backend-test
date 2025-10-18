@@ -58,8 +58,28 @@ export class ScraperService {
     }
 
     private async saveCompetitions(data: Prisma.CompetitionCreateInput[]) {
-        await this.prisma.competition.createMany({ data }).catch((e) => {
-            throw e;
+        // check recent 100 records for similarity to avoid duplicates
+        const recent = await this.prisma.competition.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 100,
         });
+        const filtered = data.filter((item) => {
+            const normTitle = normalizeText(item.title);
+            const dup = recent.some((r) =>
+                isNearDuplicate(normTitle, r.title, 0.9),
+            );
+            return !dup;
+        });
+
+        // insert filtered records and ignore duplicates
+        await this.prisma.$queryRaw`
+            INSERT OR IGNORE INTO "Competition" ("externalId", "title", "normalizedTitle", "url", "source")
+            VALUES ${Prisma.join(
+                filtered.map(
+                    (d) =>
+                        Prisma.sql`(${d.externalId}, ${d.title}, ${d.normalizedTitle}, ${d.url}, ${d.source})`,
+                ),
+            )}
+        `;
     }
 }

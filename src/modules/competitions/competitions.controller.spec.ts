@@ -12,6 +12,7 @@ describe('CompetitionsController', () => {
         id: 'test-id-123',
         externalId: 'external-id-456',
         title: 'Test Competition',
+        normalizedTitle: 'test competition',
         url: 'https://example.com',
         source: 'test-source',
         createdAt: new Date('2024-01-01'),
@@ -149,6 +150,7 @@ describe('CompetitionsController', () => {
                 title: 'New Competition',
                 url: 'https://example.com',
                 source: 'test-source',
+                normalizedTitle: 'new competition',
             };
 
             jest.spyOn(
@@ -167,6 +169,7 @@ describe('CompetitionsController', () => {
                 title: 'New Competition',
                 url: 'https://example.com',
                 source: 'test-source',
+                normalizedTitle: 'new competition',
             };
 
             const spy = jest
@@ -181,6 +184,7 @@ describe('CompetitionsController', () => {
         it('should create competition with minimal required fields', async () => {
             const createData = {
                 title: 'Minimal Competition',
+                normalizedTitle: 'minimal competition',
             };
 
             const minimalCompetition = {
@@ -211,6 +215,7 @@ describe('CompetitionsController', () => {
             const updatedCompetition = {
                 ...mockCompetition,
                 title: 'Updated Competition',
+                normalizedTitle: 'updated competition',
             };
 
             jest.spyOn(

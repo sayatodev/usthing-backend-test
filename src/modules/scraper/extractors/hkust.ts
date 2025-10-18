@@ -1,6 +1,7 @@
 import type { Page } from 'playwright';
 import type { Extractor } from '.';
 import type { Prisma } from 'generated/prisma';
+import { normalizeText } from '../utils/similarities';
 
 export const HKUSTExtractor: Extractor = {
     sourceName: 'HKUST',
@@ -12,7 +13,9 @@ export const HKUSTExtractor: Extractor = {
             'td[data-title="Detail"] > span',
             (nodes) =>
                 nodes
-                    .map<Prisma.CompetitionCreateInput>((n) => ({
+                    .map<
+                        Omit<Prisma.CompetitionCreateInput, 'normalizedTitle'>
+                    >((n) => ({
                         externalId:
                             n
                                 .getElementsByTagName('a')[0]
@@ -25,7 +28,10 @@ export const HKUSTExtractor: Extractor = {
                     }))
                     .filter((x) => !!x.title),
         );
-        return data;
+        return data.map((item) => ({
+            ...item,
+            normalizedTitle: normalizeText(item.title),
+        }));
     },
 };
 export default HKUSTExtractor;

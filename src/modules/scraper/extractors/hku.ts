@@ -1,6 +1,7 @@
 import type { Page } from 'playwright';
 import type { Extractor } from '.';
 import type { Prisma } from 'generated/prisma';
+import { normalizeText } from '../utils/similarities';
 
 export const HKUExtractor: Extractor = {
     sourceName: 'HKU',
@@ -12,7 +13,9 @@ export const HKUExtractor: Extractor = {
             'a.card-blk__item',
             (nodes: HTMLAnchorElement[]) =>
                 nodes
-                    .map<Prisma.CompetitionCreateInput>((n) => ({
+                    .map<
+                        Omit<Prisma.CompetitionCreateInput, 'normalizedTitle'>
+                    >((n) => ({
                         externalId: n.href.split('/competition/').at(-1) || '',
                         title: (
                             n.getElementsByClassName('card-blk__title')[0]
@@ -23,7 +26,10 @@ export const HKUExtractor: Extractor = {
                     }))
                     .filter((x) => !!x.title),
         );
-        return data;
+        return data.map((item) => ({
+            ...item,
+            normalizedTitle: normalizeText(item.title),
+        }));
     },
 };
 export default HKUExtractor;

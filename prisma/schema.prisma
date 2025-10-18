@@ -18,6 +18,7 @@ model Competition {
   id                  String    @id @default(cuid())
   externalId          String?
   title               String
+  normalizedTitle     String
   url                 String?
   source              String?   
   createdAt           DateTime  @default(now())
