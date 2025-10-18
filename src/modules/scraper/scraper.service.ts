@@ -63,23 +63,27 @@ export class ScraperService {
             orderBy: { createdAt: 'desc' },
             take: 100,
         });
+        console.log(`recent:`, recent, data.length);
         const filtered = data.filter((item) => {
             const normTitle = normalizeText(item.title);
             const dup = recent.some((r) =>
-                isNearDuplicate(normTitle, r.title, 0.9),
+                isNearDuplicate(normTitle, r.normalizedTitle, 0.9),
             );
             return !dup;
         });
+        console.log(`filtered:`, filtered, filtered.length);
 
         // insert filtered records and ignore duplicates
-        await this.prisma.$queryRaw`
-            INSERT OR IGNORE INTO "Competition" ("externalId", "title", "normalizedTitle", "url", "source")
-            VALUES ${Prisma.join(
-                filtered.map(
-                    (d) =>
-                        Prisma.sql`(${d.externalId}, ${d.title}, ${d.normalizedTitle}, ${d.url}, ${d.source})`,
-                ),
-            )}
-        `;
+        for (const item of filtered) {
+            try {
+                await this.prisma.competition.create({
+                    data: item,
+                });
+            } catch {
+                console.warn(
+                    `Failed to insert competition ${item.title} (possible duplicate):`,
+                );
+            }
+        }
     }
 }
