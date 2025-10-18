@@ -12,7 +12,7 @@ import { CompetitionService } from './competition.service';
 import { Competition, Prisma } from 'generated/prisma';
 
 @Controller('competitions')
-export class AppController {
+export class CompetitionsController {
   constructor(private readonly competitionService: CompetitionService) {}
 
   // GET /competitions - Get all competitions with optional filters

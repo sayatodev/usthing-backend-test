@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
 import { CompetitionService } from './competition.service';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Competition } from 'generated/prisma';
+import { CompetitionsController } from './competitions.controller';
 
-describe('AppController', () => {
-  let appController: AppController;
+describe('CompetitionsController', () => {
+  let competitionsController: CompetitionsController;
   let competitionService: CompetitionService;
 
   const mockCompetition: Competition = {
@@ -19,11 +19,13 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
+      controllers: [CompetitionsController],
       providers: [CompetitionService, PrismaService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    competitionsController = app.get<CompetitionsController>(
+      CompetitionsController,
+    );
     competitionService = app.get<CompetitionService>(CompetitionService);
   });
 
@@ -32,7 +34,7 @@ describe('AppController', () => {
       const result: Competition[] = [mockCompetition];
       jest.spyOn(competitionService, 'competitions').mockResolvedValue(result);
 
-      expect(await appController.getCompetitions()).toBe(result);
+      expect(await competitionsController.getCompetitions()).toBe(result);
     });
 
     it('should call competitions service with default parameters', async () => {
@@ -40,7 +42,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competitions')
         .mockResolvedValue([]);
 
-      await appController.getCompetitions();
+      await competitionsController.getCompetitions();
 
       expect(spy).toHaveBeenCalledWith({
         skip: undefined,
@@ -55,7 +57,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competitions')
         .mockResolvedValue([]);
 
-      await appController.getCompetitions('10', '20');
+      await competitionsController.getCompetitions('10', '20');
 
       expect(spy).toHaveBeenCalledWith({
         skip: 10,
@@ -70,7 +72,11 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competitions')
         .mockResolvedValue([]);
 
-      await appController.getCompetitions(undefined, undefined, 'test-source');
+      await competitionsController.getCompetitions(
+        undefined,
+        undefined,
+        'test-source',
+      );
 
       expect(spy).toHaveBeenCalledWith({
         skip: undefined,
@@ -85,7 +91,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competitions')
         .mockResolvedValue([]);
 
-      await appController.getCompetitions('5', '15', 'test-source');
+      await competitionsController.getCompetitions('5', '15', 'test-source');
 
       expect(spy).toHaveBeenCalledWith({
         skip: 5,
@@ -102,7 +108,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competition')
         .mockResolvedValue(mockCompetition);
 
-      const result = await appController.getCompetition('test-id-123');
+      const result = await competitionsController.getCompetition('test-id-123');
 
       expect(result).toBe(mockCompetition);
     });
@@ -112,7 +118,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'competition')
         .mockResolvedValue(mockCompetition);
 
-      await appController.getCompetition('test-id-123');
+      await competitionsController.getCompetition('test-id-123');
 
       expect(spy).toHaveBeenCalledWith({ id: 'test-id-123' });
     });
@@ -120,7 +126,8 @@ describe('AppController', () => {
     it('should return null when competition is not found', async () => {
       jest.spyOn(competitionService, 'competition').mockResolvedValue(null);
 
-      const result = await appController.getCompetition('non-existent-id');
+      const result =
+        await competitionsController.getCompetition('non-existent-id');
 
       expect(result).toBeNull();
     });
@@ -138,7 +145,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'createCompetition')
         .mockResolvedValue(mockCompetition);
 
-      const result = await appController.createCompetition(createData);
+      const result = await competitionsController.createCompetition(createData);
 
       expect(result).toBe(mockCompetition);
     });
@@ -154,7 +161,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'createCompetition')
         .mockResolvedValue(mockCompetition);
 
-      await appController.createCompetition(createData);
+      await competitionsController.createCompetition(createData);
 
       expect(spy).toHaveBeenCalledWith(createData);
     });
@@ -175,7 +182,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'createCompetition')
         .mockResolvedValue(minimalCompetition);
 
-      const result = await appController.createCompetition(createData);
+      const result = await competitionsController.createCompetition(createData);
 
       expect(spy).toHaveBeenCalledWith(createData);
       expect(result).toBe(minimalCompetition);
@@ -197,7 +204,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'updateCompetition')
         .mockResolvedValue(updatedCompetition);
 
-      const result = await appController.updateCompetition(
+      const result = await competitionsController.updateCompetition(
         'test-id-123',
         updateData,
       );
@@ -215,7 +222,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'updateCompetition')
         .mockResolvedValue(mockCompetition);
 
-      await appController.updateCompetition('test-id-123', updateData);
+      await competitionsController.updateCompetition('test-id-123', updateData);
 
       expect(spy).toHaveBeenCalledWith({
         where: { id: 'test-id-123' },
@@ -232,7 +239,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'updateCompetition')
         .mockResolvedValue(mockCompetition);
 
-      await appController.updateCompetition('test-id-123', updateData);
+      await competitionsController.updateCompetition('test-id-123', updateData);
 
       expect(spy).toHaveBeenCalledWith({
         where: { id: 'test-id-123' },
@@ -247,7 +254,8 @@ describe('AppController', () => {
         .spyOn(competitionService, 'deleteCompetition')
         .mockResolvedValue(mockCompetition);
 
-      const result = await appController.deleteCompetition('test-id-123');
+      const result =
+        await competitionsController.deleteCompetition('test-id-123');
 
       expect(result).toBe(mockCompetition);
     });
@@ -257,7 +265,7 @@ describe('AppController', () => {
         .spyOn(competitionService, 'deleteCompetition')
         .mockResolvedValue(mockCompetition);
 
-      await appController.deleteCompetition('test-id-123');
+      await competitionsController.deleteCompetition('test-id-123');
 
       expect(spy).toHaveBeenCalledWith({ id: 'test-id-123' });
     });
@@ -269,7 +277,8 @@ describe('AppController', () => {
         .spyOn(competitionService, 'deleteCompetition')
         .mockResolvedValue(deletedCompetition);
 
-      const result = await appController.deleteCompetition('test-id-123');
+      const result =
+        await competitionsController.deleteCompetition('test-id-123');
 
       expect(result).toEqual(deletedCompetition);
     });
