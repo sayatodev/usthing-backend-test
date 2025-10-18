@@ -5,6 +5,7 @@ import { CompetitionModule } from './modules/competitions/competition.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ScraperModule } from './modules/scraper/scraper.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { OnBootstrapService } from './onbootstrap.service';
 
 @Module({
     imports: [
@@ -19,6 +20,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
             },
         ]),
     ],
-    providers: [AppService],
+    providers: [AppService, OnBootstrapService],
 })
 export class AppModule {}
