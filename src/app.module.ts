@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma/prisma.service';
-import { CompetitionService } from './modules/competitions/competition.service';
-import { CompetitionsController } from './modules/competitions/competitions.controller';
+import { CompetitionModule } from './modules/competitions/competition.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [ConfigModule.forRoot()],
-  controllers: [CompetitionsController],
-  providers: [AppService, PrismaService, CompetitionService],
+  imports: [ConfigModule.forRoot(), CompetitionModule, PrismaModule],
+  providers: [AppService],
 })
 export class AppModule {}
