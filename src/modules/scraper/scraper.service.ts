@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { chromium } from 'playwright';
+import axios from 'axios';
+import { load } from 'cheerio';
+import https from 'node:https';
 import { normalizeText, isNearDuplicate } from './utils/similarities';
 import extractors from './extractors';
 import { Prisma } from 'generated/prisma';
@@ -21,17 +23,23 @@ export class ScraperService {
         status: 'success' | 'error';
         data: Prisma.CompetitionCreateInput[];
     }> {
-        const browser = await chromium.launch({ headless: false });
-        const context = await browser.newContext({ ignoreHTTPSErrors: true });
-        const page = await context.newPage();
-
         try {
+            const client = axios.create({
+                httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+            });
+
             let combined: Prisma.CompetitionCreateInput[] = [];
             for (const extractor of extractors) {
-                await page.goto(extractor.url, {
-                    waitUntil: 'domcontentloaded',
+                const resp = await client.get(extractor.url, {
+                    timeout: 20000,
+                    headers: {
+                        'User-Agent':
+                            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+                    },
+                    validateStatus: (s) => s >= 200 && s < 400,
                 });
-                const results = await extractor.scrape(page);
+                const $ = load(resp.data);
+                const results = extractor.scrape($);
                 combined.push(...results);
             }
             combined = combined.filter((item) =>
@@ -48,7 +56,6 @@ export class ScraperService {
                 );
                 if (!dup) unique.push(item);
             });
-            await browser.close();
             await this.saveCompetitions(unique);
             return { status: 'success', data: unique };
         } catch (e) {
