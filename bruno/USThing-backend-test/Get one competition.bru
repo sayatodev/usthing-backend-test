@@ -1,0 +1,20 @@
+meta {
+  name: Get one competition
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/competitions/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

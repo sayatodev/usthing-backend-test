@@ -1,0 +1,44 @@
+meta {
+  name: Create one competition
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/competitions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id":"{{id}}",
+    "title":"{{title}}",
+    "url":"{{url}}",
+    "source":"{{source}}",
+    "createdAt":"{{createdAt}}",
+    "updatedAt":"{{updatedAt}}"
+  }
+}
+
+vars:pre-request {
+  id: 
+  title: Super case comp 2025
+  url: 
+  source: 
+  createdAt: 
+  updatedAt: 
+}
+
+script:pre-request {
+  function removeEmpty(obj) {
+    return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+  }
+  const body = req.getBody();
+  req.setBody(removeEmpty(body))
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

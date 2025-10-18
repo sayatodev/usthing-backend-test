@@ -1,0 +1,19 @@
+meta {
+  name: Update one competition
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/competitions/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+settings {
+  encodeUrl: true
+}
