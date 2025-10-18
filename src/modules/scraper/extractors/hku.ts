@@ -1,5 +1,6 @@
 import type { Page } from 'playwright';
-import { Extractor } from '.';
+import type { Extractor } from '.';
+import type { Prisma } from 'generated/prisma';
 
 export const HKUExtractor: Extractor = {
     sourceName: 'HKU',
@@ -14,7 +15,10 @@ export const HKUExtractor: Extractor = {
                     .map((n) => (n.textContent || '').trim())
                     .filter((x) => !!x),
         );
-        return titles.map((t) => `${t} [HKU]`);
+        return titles.map<Prisma.CompetitionCreateInput>((title) => ({
+            title,
+            source: 'HKU',
+        }));
     },
 };
 export default HKUExtractor;

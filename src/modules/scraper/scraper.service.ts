@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { chromium } from 'playwright';
 import { normalizeText, isNearDuplicate } from './utils/similarities';
 import extractors from './extractors';
+import { Prisma } from 'generated/prisma';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ScraperService {
@@ -13,54 +15,51 @@ export class ScraperService {
         'Datathon',
     ];
 
+    constructor(private prisma: PrismaService) {}
+
     async scrapeCompetitions(): Promise<{
         status: 'success' | 'error';
-        data: string[];
+        data: Prisma.CompetitionCreateInput[];
     }> {
         const browser = await chromium.launch({ headless: false });
         const context = await browser.newContext({ ignoreHTTPSErrors: true });
         const page = await context.newPage();
+
         try {
-            let combined: string[] = [];
+            let combined: Prisma.CompetitionCreateInput[] = [];
             for (const extractor of extractors) {
                 await page.goto(extractor.url, {
                     waitUntil: 'domcontentloaded',
                 });
                 const results = await extractor.scrape(page);
-                combined = [...combined, ...results];
+                combined.push(...results);
             }
-            combined = combined.filter((text) =>
+            combined = combined.filter((item) =>
                 this.KEYWORDS.some((kw) =>
-                    text.toLowerCase().includes(kw.toLowerCase()),
+                    item.title.toLowerCase().includes(kw.toLowerCase()),
                 ),
             );
 
-            const unique: {
-                idx: number;
-                original: string;
-                normalized: string;
-            }[] = [];
-            combined.forEach((text, idx) => {
-                const norm = normalizeText(text);
+            const unique: Prisma.CompetitionCreateInput[] = [];
+            combined.forEach((item) => {
+                const normTitle = normalizeText(item.title);
                 const dup = unique.some((u) =>
-                    isNearDuplicate(norm, u.normalized, 0.9),
+                    isNearDuplicate(normTitle, u.title, 0.9),
                 );
-                if (!dup)
-                    unique.push({ idx, original: text, normalized: norm });
+                if (!dup) unique.push(item);
             });
-            return {
-                status: 'success',
-                data: unique.map((u) => u.original),
-            };
+            await browser.close();
+            await this.saveCompetitions(unique);
+            return { status: 'success', data: unique };
         } catch (e) {
             console.error('Scraping failed:', e);
             return { status: 'error', data: [] };
-        } finally {
-            try {
-                await browser.close();
-            } catch (e) {
-                console.error('Failed to close browser:', e);
-            }
         }
+    }
+
+    private async saveCompetitions(data: Prisma.CompetitionCreateInput[]) {
+        await this.prisma.competition.createMany({ data }).catch((e) => {
+            throw e;
+        });
     }
 }
