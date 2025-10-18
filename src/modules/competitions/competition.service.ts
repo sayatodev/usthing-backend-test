@@ -30,31 +30,4 @@ export class CompetitionService {
             orderBy,
         });
     }
-
-    async createCompetition(
-        data: Prisma.CompetitionCreateInput,
-    ): Promise<Competition> {
-        return this.prisma.competition.create({
-            data,
-        });
-    }
-
-    async updateCompetition(params: {
-        where: Prisma.CompetitionWhereUniqueInput;
-        data: Prisma.CompetitionUpdateInput;
-    }): Promise<Competition> {
-        const { where, data } = params;
-        return this.prisma.competition.update({
-            data,
-            where,
-        });
-    }
-
-    async deleteCompetition(
-        where: Prisma.CompetitionWhereUniqueInput,
-    ): Promise<Competition> {
-        return this.prisma.competition.delete({
-            where,
-        });
-    }
 }

@@ -1,15 +1,12 @@
 import {
     Controller,
     Get,
-    Post,
-    Put,
-    Delete,
-    Body,
+    NotFoundException,
     Param,
     Query,
 } from '@nestjs/common';
 import { CompetitionService } from './competition.service';
-import { Competition, Prisma } from 'generated/prisma';
+import { Competition, type Prisma } from 'generated/prisma';
 
 @Controller('competitions')
 export class CompetitionsController {
@@ -18,47 +15,36 @@ export class CompetitionsController {
     // GET /competitions - Get all competitions with optional filters
     @Get()
     async getCompetitions(
-        @Query('skip') skip?: string,
-        @Query('take') take?: string,
+        @Query('isCreatedAfter') isAfter?: string,
+        @Query('limit') limit?: string,
         @Query('source') source?: string,
-    ): Promise<Competition[]> {
-        return this.competitionService.competitions({
-            skip: skip ? Number(skip) : undefined,
-            take: take ? Number(take) : undefined,
-            where: source ? { source } : undefined,
+        @Query('keyword') keyword?: string,
+    ): Promise<Array<Omit<Competition, 'normalizedTitle'>>> {
+        const where: Prisma.CompetitionWhereInput = {};
+        if (source) {
+            where.source = source;
+        }
+        if (keyword) {
+            where.title = { contains: keyword };
+        }
+        const data = await this.competitionService.competitions({
+            skip: isAfter ? Number(isAfter) : undefined,
+            take: limit ? Number(limit) : undefined,
+            where,
             orderBy: { createdAt: 'desc' },
         });
+        return data.map(({ normalizedTitle, ...rest }) => rest);
     }
 
-    // GET /competitions/:id - Get a single competition by ID
     @Get(':id')
-    async getCompetition(@Param('id') id: string): Promise<Competition | null> {
-        return this.competitionService.competition({ id });
-    }
-
-    // POST /competitions - Create a new competition
-    @Post()
-    async createCompetition(
-        @Body() data: Prisma.CompetitionCreateInput,
-    ): Promise<Competition> {
-        return this.competitionService.createCompetition(data);
-    }
-
-    // PUT /competitions/:id - Update a competition
-    @Put(':id')
-    async updateCompetition(
+    async getCompetition(
         @Param('id') id: string,
-        @Body() data: Prisma.CompetitionUpdateInput,
-    ): Promise<Competition> {
-        return this.competitionService.updateCompetition({
-            where: { id },
-            data,
-        });
-    }
-
-    // DELETE /competitions/:id - Delete a competition
-    @Delete(':id')
-    async deleteCompetition(@Param('id') id: string): Promise<Competition> {
-        return this.competitionService.deleteCompetition({ id });
+    ): Promise<Omit<Competition, 'normalizedTitle'>> {
+        const data = await this.competitionService.competition({ id });
+        if (!data) {
+            throw new NotFoundException('Competition not found');
+        }
+        const { normalizedTitle, ...result } = data;
+        return result;
     }
 }
