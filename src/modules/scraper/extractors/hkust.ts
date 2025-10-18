@@ -8,15 +8,24 @@ export const HKUSTExtractor: Extractor = {
 
     scrape: async (page: Page) => {
         await page.waitForSelector('tr');
-        const titles = await page.$$eval('tr h3', (nodes) =>
-            Array.from(nodes)
-                .map((n) => (n.textContent || '').trim())
-                .filter((x) => !!x),
+        const data = await page.$$eval(
+            'td[data-title="Detail"] > span',
+            (nodes) =>
+                nodes
+                    .map<Prisma.CompetitionCreateInput>((n) => ({
+                        externalId:
+                            n
+                                .getElementsByTagName('a')[0]
+                                ?.href.split('announcement/')
+                                .at(-1) || '',
+                        title:
+                            n.getElementsByTagName('h3')[0]?.textContent || '',
+                        url: n.getElementsByTagName('a')[0]?.href || '',
+                        source: 'HKUST',
+                    }))
+                    .filter((x) => !!x.title),
         );
-        return titles.map<Prisma.CompetitionCreateInput>((title) => ({
-            title,
-            source: 'HKUST',
-        }));
+        return data;
     },
 };
 export default HKUSTExtractor;

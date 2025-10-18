@@ -8,17 +8,22 @@ export const HKUExtractor: Extractor = {
 
     scrape: async (page: Page) => {
         await page.waitForSelector('a.card-blk__item');
-        const titles = await page.$$eval(
-            'a.card-blk__item p.card-blk__title',
-            (nodes) =>
-                Array.from(nodes)
-                    .map((n) => (n.textContent || '').trim())
-                    .filter((x) => !!x),
+        const data = await page.$$eval(
+            'a.card-blk__item',
+            (nodes: HTMLAnchorElement[]) =>
+                nodes
+                    .map<Prisma.CompetitionCreateInput>((n) => ({
+                        externalId: n.href.split('/competition/').at(-1) || '',
+                        title: (
+                            n.getElementsByClassName('card-blk__title')[0]
+                                ?.textContent || ''
+                        ).trim(),
+                        url: n.href,
+                        source: 'HKU',
+                    }))
+                    .filter((x) => !!x.title),
         );
-        return titles.map<Prisma.CompetitionCreateInput>((title) => ({
-            title,
-            source: 'HKU',
-        }));
+        return data;
     },
 };
 export default HKUExtractor;
