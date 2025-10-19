@@ -3,7 +3,7 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import https from 'node:https';
 import { normalizeText, isNearDuplicate } from './utils/similarities';
-import extractors from './extractors';
+import { allExtractors, getExtractorBySource } from './extractors';
 import { Prisma } from 'generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -19,7 +19,10 @@ export class ScraperService {
 
     constructor(private prisma: PrismaService) {}
 
-    async scrapeCompetitions(sync: boolean): Promise<{
+    async scrapeCompetitions(
+        sync: boolean,
+        sources?: string[],
+    ): Promise<{
         status: 'success' | 'error';
         data: Prisma.CompetitionCreateInput[];
     }> {
@@ -29,7 +32,16 @@ export class ScraperService {
             });
 
             let combined: Prisma.CompetitionCreateInput[] = [];
-            for (const extractor of extractors) {
+
+            // if sources provided, only use those extractors
+            const extractorsToUse =
+                sources && sources.length > 0
+                    ? sources
+                          .map((source) => getExtractorBySource(source))
+                          .filter((e) => e !== null)
+                    : allExtractors;
+
+            for (const extractor of extractorsToUse) {
                 const resp = await client.get(extractor.url, {
                     timeout: 20000,
                     headers: {

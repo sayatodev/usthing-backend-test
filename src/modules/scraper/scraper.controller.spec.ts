@@ -87,5 +87,43 @@ describe('ScraperController', () => {
 
             expect(spy).toHaveBeenCalled();
         });
+
+        it('should call scrapeCompetitions service with sources filter', async () => {
+            const serviceResult = {
+                status: 'success' as const,
+                data: [mockCompetitionCreateInput],
+            };
+
+            const spy = jest
+                .spyOn(scraperService, 'scrapeCompetitions')
+                .mockResolvedValue(serviceResult);
+
+            await scraperController.scrapeCompetitions({
+                action: ScrapeAction.RUN,
+                sources: ['hku', 'hkust'],
+            });
+
+            expect(spy).toHaveBeenCalledWith(false, ['hku', 'hkust']);
+        });
+
+        it('should throw an error when invalid source name is given', async () => {
+            await expect(
+                scraperController.scrapeCompetitions({
+                    action: ScrapeAction.RUN,
+                    sources: ['invalid-source', 'another-invalid'],
+                }),
+            ).rejects.toThrow(
+                'Invalid source name(s): invalid-source, another-invalid',
+            );
+        });
+
+        it('should throw an error when one source is valid and one is invalid', async () => {
+            await expect(
+                scraperController.scrapeCompetitions({
+                    action: ScrapeAction.RUN,
+                    sources: ['hku', 'invalid-source'],
+                }),
+            ).rejects.toThrow('Invalid source name(s): invalid-source');
+        });
     });
 });

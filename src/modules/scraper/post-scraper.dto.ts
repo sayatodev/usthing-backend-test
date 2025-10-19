@@ -5,4 +5,5 @@ export enum ScrapeAction {
 
 export class PostScraperDto {
     action: ScrapeAction;
+    sources?: string[];
 }

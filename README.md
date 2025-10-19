@@ -5,8 +5,10 @@ This project is mainly made with Nest and Prisma. It is intended to be scalable.
 
 ## Docker
 
-### **Important: Please create the `.env` file first. See the following example:**  
+### **Important: Please create the `.env` file first. See the following example:**
+
 _Alternatively, you may run `mv .env.template .env`._
+
 ```sh
 # .env
 DATABASE_URL="file:./dev.db"
@@ -19,6 +21,7 @@ DATABASE_PASSWORD=test
 ```bash
 docker compose up -d
 ```
+
 The service runs on port `3000` by default.
 
 ## API Routes
@@ -36,7 +39,8 @@ This data comes from the database which stores previous scraped records.
 | keyword        | string | No       | Filter competitions whose title contains this keyword                                       |
 
 **Sample Response:**  
-Status code: `200 OK`  
+Status code: `200 OK`
+
 ```json
 [
   {
@@ -63,7 +67,8 @@ Returns a single competition by its ID.
 | id             | string | Yes      | Competition ID |
 
 **Sample Response:**  
-Status code: `200 OK`  
+Status code: `200 OK`
+
 ```json
 {
     "id": "cmgwe95o90005si64o48al8cf",
@@ -91,9 +96,11 @@ Triggers scraping of competitions and optionally store the scraped results into 
 | Body Field | Type          | Required | Description                                                                                                                |
 | ---------- | ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
 | action     | "run"\|"sync" | Yes      | "run" scrapes the sources and return scraped data, "sync" scrapes the sources, update the database and return scraped data |
+| sources    | _sourceName_[]  | No       | Optional array of source names to filter which extractors to use, where _sourceName_ is one of "hku", "hkust" or "polyu"   |
 
 **Sample Response:**  
-Status code: `200 OK`  
+Status code: `200 OK`
+
 ```json
 [
   {
@@ -109,5 +116,5 @@ Status code: `200 OK`
 
 **Error Responses:**
 
-- `400`: Invalid request body
+- `400`: Invalid request body (e.g., missing action, invalid action value, or invalid source names)
 - `429`: Rate limit exceeded
