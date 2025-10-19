@@ -1,0 +1,16 @@
+meta {
+  name: Scrape data sources
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/scraper
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
