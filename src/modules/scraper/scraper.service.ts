@@ -19,7 +19,7 @@ export class ScraperService {
 
     constructor(private prisma: PrismaService) {}
 
-    async scrapeCompetitions(): Promise<{
+    async scrapeCompetitions(sync: boolean): Promise<{
         status: 'success' | 'error';
         data: Prisma.CompetitionCreateInput[];
     }> {
@@ -56,7 +56,7 @@ export class ScraperService {
                 );
                 if (!dup) unique.push(item);
             });
-            await this.saveCompetitions(unique);
+            if (sync) await this.saveCompetitions(unique);
             return { status: 'success', data: unique };
         } catch (e) {
             console.error('Scraping failed:', e);

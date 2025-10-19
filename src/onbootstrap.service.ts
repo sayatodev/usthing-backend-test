@@ -6,6 +6,6 @@ export class OnBootstrapService implements OnApplicationBootstrap {
     constructor(private readonly scraper: ScraperService) {}
 
     onApplicationBootstrap() {
-        void this.scraper.scrapeCompetitions();
+        void this.scraper.scrapeCompetitions(true);
     }
 }

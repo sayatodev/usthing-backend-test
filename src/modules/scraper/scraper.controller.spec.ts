@@ -4,6 +4,7 @@ import { ScraperService } from './scraper.service';
 import { Prisma } from 'generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ScrapeAction } from './post-scraper.dto';
 
 describe('ScraperController', () => {
     let scraperController: ScraperController;
@@ -46,7 +47,9 @@ describe('ScraperController', () => {
                 serviceResult,
             );
 
-            const result = await scraperController.scrapeCompetitions();
+            const result = await scraperController.scrapeCompetitions({
+                action: ScrapeAction.RUN,
+            });
             expect(result).toHaveLength(1);
             expect(result[0]).toEqual(mockCompetitionCreateInput);
         });
@@ -62,7 +65,9 @@ describe('ScraperController', () => {
             );
 
             await expect(
-                scraperController.scrapeCompetitions(),
+                scraperController.scrapeCompetitions({
+                    action: ScrapeAction.RUN,
+                }),
             ).rejects.toThrow('Scraping failed');
         });
 
@@ -76,7 +81,9 @@ describe('ScraperController', () => {
                 .spyOn(scraperService, 'scrapeCompetitions')
                 .mockResolvedValue(serviceResult);
 
-            await scraperController.scrapeCompetitions();
+            await scraperController.scrapeCompetitions({
+                action: ScrapeAction.RUN,
+            });
 
             expect(spy).toHaveBeenCalled();
         });

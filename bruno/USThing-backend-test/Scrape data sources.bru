@@ -6,8 +6,12 @@ meta {
 
 post {
   url: {{baseUrl}}/scraper
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {"action":"run"}
 }
 
 settings {
