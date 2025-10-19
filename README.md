@@ -5,8 +5,9 @@ This project is mainly made with Nest and Prisma. It is intended to be scalable.
 
 ## Docker
 
-**Important: Please create the `.env` file first. See the following example:**
-```
+### **Important: Please create the `.env` file first. See the following example:**  
+_Alternatively, you may run `mv .env.template .env`._
+```sh
 # .env
 DATABASE_URL="file:./dev.db"
 DATABASE_USER=test
