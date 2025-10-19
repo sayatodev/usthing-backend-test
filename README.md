@@ -17,8 +17,8 @@ This data comes from the database which stores previous scraped records.
 | source         | string | No       | Filter by competition source                                                                |
 | keyword        | string | No       | Filter competitions whose title contains this keyword                                       |
 
-**Sample Response:**
-
+**Sample Response:**  
+Status code: `200 OK`  
 ```json
 [
   {
@@ -44,8 +44,8 @@ Returns a single competition by its ID.
 | -------------- | ------ | -------- | -------------- |
 | id             | string | Yes      | Competition ID |
 
-**Sample Response:**
-
+**Sample Response:**  
+Status code: `200 OK`  
 ```json
 {
     "id": "cmgwe95o90005si64o48al8cf",
@@ -66,13 +66,16 @@ Returns a single competition by its ID.
 
 ### POST /scraper
 
-Triggers scraping of competitions and store the scraped results into the database. The scraped data is returned. 
-
+Triggers scraping of competitions and optionally store the scraped results into the database. The scraped data is returned.
 
 **Throttling:** Max 3 requests per 20 seconds per client.
 
-**Response:**
+| Body Field | Type          | Required | Description                                                                                                                |
+| ---------- | ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| action     | "run"\|"sync" | Yes      | "run" scrapes the sources and return scraped data, "sync" scrapes the sources, update the database and return scraped data |
 
+**Sample Response:**  
+Status code: `200 OK`  
 ```json
 [
   {
@@ -88,4 +91,5 @@ Triggers scraping of competitions and store the scraped results into the databas
 
 **Error Responses:**
 
+- `400`: Invalid request body
 - `429`: Rate limit exceeded
