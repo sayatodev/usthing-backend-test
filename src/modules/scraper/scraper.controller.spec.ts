@@ -35,7 +35,7 @@ describe('ScraperController', () => {
         scraperService = app.get<ScraperService>(ScraperService);
     });
 
-    describe('GET /scraper/competitions - scrapeCompetitions', () => {
+    describe('POST /scraper - scrapeCompetitions', () => {
         it('should return an array of competition create inputs on success', async () => {
             const serviceResult = {
                 status: 'success' as const,

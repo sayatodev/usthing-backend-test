@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import type { Prisma } from 'generated/prisma';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -9,7 +9,7 @@ export class ScraperController {
 
     @UseGuards(ThrottlerGuard)
     @Throttle({ default: { limit: 3, ttl: 20 * 1000 /* 3 req / 20s */ } })
-    @Get('competitions')
+    @Post()
     async scrapeCompetitions(): Promise<Prisma.CompetitionCreateInput[]> {
         const { status, data } = await this.scraperService.scrapeCompetitions();
         if (status === 'success') {

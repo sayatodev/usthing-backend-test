@@ -64,7 +64,7 @@ Returns a single competition by its ID.
 
 ---
 
-### GET /scraper/competitions
+### POST /scraper
 
 Triggers scraping of competitions and store the scraped results into the database. The scraped data is returned. 
 
