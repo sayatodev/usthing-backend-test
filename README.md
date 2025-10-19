@@ -62,9 +62,9 @@ Status code: `200 OK`
 
 Returns a single competition by its ID.
 
-| Path Parameter | Type   | Required | Description    |
-| -------------- | ------ | -------- | -------------- |
-| id             | string | Yes      | Competition ID |
+| Path param | Type   | Required | Description    |
+| ---------- | ------ | -------- | -------------- |
+| id         | string | Yes      | Competition ID |
 
 **Sample Response:**  
 Status code: `200 OK`
@@ -93,10 +93,10 @@ Triggers scraping of competitions and optionally store the scraped results into 
 
 **Throttling:** Max 3 requests per 20 seconds per client.
 
-| Body Field | Type          | Required | Description                                                                                                                |
-| ---------- | ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| action     | "run"\|"sync" | Yes      | "run" scrapes the sources and return scraped data, "sync" scrapes the sources, update the database and return scraped data |
-| sources    | _sourceName_[]  | No       | Optional array of source names to filter which extractors to use, where _sourceName_ is one of "hku", "hkust" or "polyu"   |
+| Body field | Type           | Required | Description                                                                                                                |
+| ---------- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| action     | "run"\|"sync"  | Yes      | "run" scrapes the sources and return scraped data, "sync" scrapes the sources, update the database and return scraped data |
+| sources    | _sourceName_[] | No       | Optional array of source names to filter which extractors to use, where _sourceName_ is one of "hku", "hkust" or "polyu"   |
 
 **Sample Response:**  
 Status code: `200 OK`
