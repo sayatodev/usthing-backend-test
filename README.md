@@ -3,6 +3,13 @@
 This is my submission for the USThing Backend Technical Test(2025).  
 This project is mainly made with Nest and Prisma. It is intended to be scalable.
 
+## Docker
+
+```bash
+docker compose up -d
+```
+The service runs on port `3000` by default.
+
 ## API Routes
 
 ### GET /competitions
