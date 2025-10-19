@@ -5,6 +5,16 @@ This project is mainly made with Nest and Prisma. It is intended to be scalable.
 
 ## Docker
 
+**Important: Please create the `.env` file first. See the followin example:**
+```
+# .env
+DATABASE_URL="file:./dev.db"
+DATABASE_USER=test
+DATABASE_PASSWORD=test
+```
+
+### Build and start the container
+
 ```bash
 docker compose up -d
 ```
