@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    HttpCode,
     HttpException,
     Post,
     UseGuards,
@@ -16,6 +17,7 @@ export class ScraperController {
 
     @UseGuards(ThrottlerGuard)
     @Throttle({ default: { limit: 3, ttl: 20 * 1000 /* 3 req / 20s */ } })
+    @HttpCode(200)
     @Post()
     async scrapeCompetitions(
         @Body() postScraperDto: PostScraperDto,
