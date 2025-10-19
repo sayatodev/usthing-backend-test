@@ -5,7 +5,7 @@ import https from 'node:https';
 import { normalizeText, isNearDuplicate } from './utils/similarities';
 import extractors from './extractors';
 import { Prisma } from 'generated/prisma';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ScraperService {
