@@ -8,6 +8,7 @@ This project is mainly made with Nest and Prisma. It is intended to be scalable.
 ### GET /competitions
 
 Returns a list of competitions. Supports filtering and pagination.
+This data comes from the database which stores previous scraped records.
 
 | Query param    | Type   | Required | Description                                                                                 |
 | -------------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
